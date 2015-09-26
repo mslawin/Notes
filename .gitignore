@@ -1,0 +1,6 @@
+Mslawin-notes-app/build
+Mslawin-notes-app/.idea/
+Mslawin-notes-app/*.iml
+Mslawin-notes-Server/*.iml
+Mslawin-notes-Server/.idea/
+Mslawin-notes-Server/target/
