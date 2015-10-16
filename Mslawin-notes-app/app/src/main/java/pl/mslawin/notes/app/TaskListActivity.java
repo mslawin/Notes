@@ -4,6 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.mslawin.notes.app.constants.NotesConstants;
+import pl.mslawin.notes.app.model.TasksList;
+import pl.mslawin.notes.app.service.TasksService;
+
 
 /**
  * An activity representing a list of TasksList. This activity
@@ -24,11 +31,7 @@ import android.support.v4.app.FragmentActivity;
 public class TaskListActivity extends FragmentActivity
         implements TaskListFragment.Callbacks {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
+    private final TasksService tasksService = new TasksService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +43,14 @@ public class TaskListActivity extends FragmentActivity
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
-            mTwoPane = true;
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((TaskListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.task_list))
-                    .setActivateOnItemClick(true);
+            TaskListFragment taskListFragment =
+                    ((TaskListFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.task_list));
+            taskListFragment.setActivateOnItemClick(true);
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     /**
@@ -58,24 +59,8 @@ public class TaskListActivity extends FragmentActivity
      */
     @Override
     public void onItemSelected(String id) {
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(TaskDetailFragment.ARG_ITEM_ID, id);
-            TaskDetailFragment fragment = new TaskDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.task_detail_container, fragment)
-                    .commit();
-
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, TaskDetailActivity.class);
-            detailIntent.putExtra(TaskDetailFragment.ARG_ITEM_ID, id);
-            startActivity(detailIntent);
-        }
+        Intent intent = new Intent(this, TaskDetailActivity.class);
+        intent.putExtra(NotesConstants.TASKS_PARAM, tasksService.getTaskList(id));
+        startActivity(intent);
     }
 }

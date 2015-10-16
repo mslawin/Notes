@@ -7,8 +7,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pl.mslawin.notes.app.dummy.DummyContent;
+import pl.mslawin.notes.app.exception.GetTasksListException;
+import pl.mslawin.notes.app.model.TasksList;
+import pl.mslawin.notes.app.service.TasksService;
 
 /**
  * A list fragment representing a list of TasksList. This fragment
@@ -21,6 +28,7 @@ import pl.mslawin.notes.app.dummy.DummyContent;
  */
 public class TaskListFragment extends ListFragment {
 
+    private static final Logger logger = Logger.getLogger(TaskListFragment.class.getName());
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
@@ -47,7 +55,7 @@ public class TaskListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        void onItemSelected(String id);
     }
 
     /**
@@ -60,6 +68,8 @@ public class TaskListFragment extends ListFragment {
         }
     };
 
+    private final TasksService tasksService = new TasksService();
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -70,24 +80,35 @@ public class TaskListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        try {
+            setListAdapter(new ArrayAdapter<>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    getTasksListNames()));
+        } catch (GetTasksListException e) {
+            logger.log(Level.SEVERE, "Unable to get tasks list for user: ", e);
+        }
 
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
+    }
+
+    private List<String> getTasksListNames() {
+        List<String> result = new ArrayList<>();
+        List<TasksList> tasksListList = tasksService.getListsForUser("m@slawin.pl");
+        for (TasksList tasksList : tasksListList) {
+            result.add("List - " + tasksList.getId());
+        }
+        return result;
     }
 
     @Override

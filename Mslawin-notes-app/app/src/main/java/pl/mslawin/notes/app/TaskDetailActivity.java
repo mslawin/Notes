@@ -6,6 +6,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import pl.mslawin.notes.app.constants.NotesConstants;
+
 
 /**
  * An activity representing a single Task detail screen. This
@@ -39,12 +41,12 @@ public class TaskDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(TaskDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(TaskDetailFragment.ARG_ITEM_ID));
+            arguments.putSerializable(NotesConstants.TASKS_PARAM,
+                    getIntent().getSerializableExtra(NotesConstants.TASKS_PARAM));
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.task_detail_container, fragment)
+                    .replace(R.id.task_detail_container_detail, fragment)
                     .commit();
         }
     }

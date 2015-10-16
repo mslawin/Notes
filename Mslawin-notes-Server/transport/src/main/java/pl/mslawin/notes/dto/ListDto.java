@@ -4,30 +4,20 @@ import java.util.List;
 
 public class ListDto {
 
-    private UserDto owner;
-    private List<TaskDto> tasks;
+    private List<TaskListDto> taskListDtoList;
 
     public ListDto() {
     }
 
-    public ListDto(UserDto owner, List<TaskDto> tasks) {
-        this.owner = owner;
-        this.tasks = tasks;
+    public ListDto(List<TaskListDto> taskListDtoList) {
+        this.taskListDtoList = taskListDtoList;
     }
 
-    public UserDto getOwner() {
-        return owner;
+    public List<TaskListDto> getTaskListDtoList() {
+        return taskListDtoList;
     }
 
-    public void setOwner(UserDto owner) {
-        this.owner = owner;
-    }
-
-    public List<TaskDto> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<TaskDto> tasks) {
-        this.tasks = tasks;
+    public void setTaskListDtoList(List<TaskListDto> taskListDtoList) {
+        this.taskListDtoList = taskListDtoList;
     }
 }

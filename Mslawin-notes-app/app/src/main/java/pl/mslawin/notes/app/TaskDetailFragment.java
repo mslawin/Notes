@@ -5,10 +5,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
-import pl.mslawin.notes.app.dummy.DummyContent;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import pl.mslawin.notes.app.model.Task;
+import pl.mslawin.notes.app.model.TasksList;
+
+import static pl.mslawin.notes.app.constants.NotesConstants.TASKS_PARAM;
 
 /**
  * A fragment representing a single Task detail screen.
@@ -23,10 +32,9 @@ public class TaskDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
+    private TasksList tasksList;
+
+    private ListView listView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -38,12 +46,8 @@ public class TaskDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        if (getArguments().containsKey(TASKS_PARAM)) {
+            tasksList = (TasksList) getArguments().getSerializable(TASKS_PARAM);
         }
     }
 
@@ -52,11 +56,29 @@ public class TaskDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.task_detail)).setText(mItem.content);
-        }
-
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (listView == null) {
+            listView = ((ListView) getView().findViewById(R.id.task_detail));
+        }
+        // Show the dummy content as text in a TextView.
+        if (tasksList != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getView().getContext(),
+                    R.layout.activity_task_detail_text, new ArrayList<>(getTransformer()));
+            listView.setAdapter(adapter);
+        }
+    }
+
+    private Collection<String> getTransformer() {
+        return Collections2.transform(tasksList.getTasks(), new Function<Task, String>() {
+            @Override
+            public String apply(Task input) {
+                return input.getAuthor() + ": " + input.getText();
+            }
+        });
     }
 }

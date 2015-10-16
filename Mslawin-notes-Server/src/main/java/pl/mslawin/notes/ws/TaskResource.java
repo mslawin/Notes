@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import pl.mslawin.notes.domain.notes.Task;
 import pl.mslawin.notes.domain.notes.TasksList;
 import pl.mslawin.notes.dto.AddTaskRequest;
 import pl.mslawin.notes.dto.ListDto;
+import pl.mslawin.notes.dto.TaskListDto;
 import pl.mslawin.notes.dto.UserDto;
 import pl.mslawin.notes.service.TaskService;
 
@@ -47,7 +49,7 @@ public class TaskResource {
     }
 
     @RequestMapping(value = "/{id}")
-    public ResponseEntity<ListDto> getList(@PathVariable("id") String id) {
+    public ResponseEntity<TaskListDto> getList(@PathVariable("id") String id) {
         Long idLong;
         try {
             idLong = Long.valueOf(id);
@@ -55,5 +57,10 @@ public class TaskResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         return ResponseEntity.ok(taskService.getList(idLong));
+    }
+
+    @RequestMapping(value = "/getForUser")
+    public ResponseEntity<ListDto> getAllListsForUser(@RequestParam("email") String email) {
+        return ResponseEntity.ok(taskService.getAllListsForUser(email));
     }
 }

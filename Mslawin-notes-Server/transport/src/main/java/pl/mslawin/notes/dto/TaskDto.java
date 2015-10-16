@@ -1,20 +1,20 @@
 package pl.mslawin.notes.dto;
 
-import java.time.LocalDateTime;
-
 public class TaskDto {
 
     private UserDto author;
     private String text;
-    private LocalDateTime creationDate;
+    private long creationDate;
+    private long id;
 
     public TaskDto() {
     }
 
-    public TaskDto(UserDto author, String text, LocalDateTime creationDate) {
+    public TaskDto(UserDto author, String text, long creationDate, long id) {
         this.author = author;
         this.text = text;
         this.creationDate = creationDate;
+        this.id = id;
     }
 
     public UserDto getAuthor() {
@@ -33,11 +33,19 @@ public class TaskDto {
         this.text = text;
     }
 
-    public LocalDateTime getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
