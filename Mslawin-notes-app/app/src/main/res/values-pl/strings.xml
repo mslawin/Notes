@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mslawin-notes-app</string>
+    <string name="title_task_detail">Task Detail</string>
+    <string name="no_internet_connection">Nie można połączyć się z Internetem. Sprawdź swoje połączenie i spróbuj ponownie</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+
+    <string name="createTaskButtonName">Dodaj zadanie</string>
+    <string name="createTaskDialogTitle">Dodaj zadanie</string>
+    <string name="createTaskDialogMessage">Wprowadź temat zadania i naciśnij OK</string>
+    <string name="createTaskDialogText">Temat zadania</string>
+    <string name="createTaskSuccess">Pomyślnie dodano nowe zadanie</string>
+
+    <string name="shareListButtonName">Udostępnij</string>
+    <string name="shareListDialogTitle">Udostępnij listę zadań</string>
+    <string name="shareListDialogMessage">Wybierz znajomego, któremu chcesz udostępnić listę</string>
+    <string name="shareListDialogText">Wybierz lub wprowadź email</string>
+    <string name="shareListSuccess">Pomyślnie udostępniono zadanie</string>
+
+    <string name="title_activity_google_play_services">Zaloguj się z google</string>
+</resources>

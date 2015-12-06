@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">Mslawin-notes-app</string>
     <string name="title_task_detail">Task Detail</string>
+    <string name="no_internet_connection">Couldn\'t connect to the Internet. Please check your connection and try again.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="createTaskButtonName">Create task</string>
+    <string name="createTaskDialogTitle">Create task</string>
+    <string name="createTaskDialogMessage">Insert task value and press OK</string>
+    <string name="createTaskDialogText">Task value</string>
+    <string name="createTaskSuccess">Task created successfully</string>
+
+    <string name="shareListButtonName">Share</string>
+    <string name="shareListDialogTitle">Share tasks list</string>
+    <string name="shareListDialogMessage">Pick a friend to share a list</string>
+    <string name="shareListDialogText">Pick or insert email</string>
+    <string name="shareListSuccess">Task shared successfully</string>
+
+    <string name="title_activity_google_play_services">Login with google</string>
 </resources>

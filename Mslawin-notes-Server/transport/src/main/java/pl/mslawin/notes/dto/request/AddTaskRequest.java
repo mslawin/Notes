@@ -1,22 +1,16 @@
-package pl.mslawin.notes.dto;
+package pl.mslawin.notes.dto.request;
 
 public class AddTaskRequest {
 
-    private UserDto user;
     private String text;
     private Long listId;
 
     public AddTaskRequest() {
     }
 
-    public AddTaskRequest(UserDto user, String text, Long listId) {
-        this.user = user;
+    public AddTaskRequest(String text, Long listId) {
         this.text = text;
         this.listId = listId;
-    }
-
-    public UserDto getUser() {
-        return user;
     }
 
     public String getText() {
@@ -25,10 +19,6 @@ public class AddTaskRequest {
 
     public Long getListId() {
         return listId;
-    }
-
-    public void setUser(UserDto user) {
-        this.user = user;
     }
 
     public void setText(String text) {

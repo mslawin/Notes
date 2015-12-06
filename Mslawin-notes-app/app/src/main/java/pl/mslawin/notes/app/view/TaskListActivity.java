@@ -1,15 +1,12 @@
-package pl.mslawin.notes.app;
+package pl.mslawin.notes.app.view;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import pl.mslawin.notes.app.R;
 import pl.mslawin.notes.app.constants.NotesConstants;
 import pl.mslawin.notes.app.model.TasksList;
-import pl.mslawin.notes.app.service.TasksService;
 
 
 /**
@@ -28,10 +25,7 @@ import pl.mslawin.notes.app.service.TasksService;
  * {@link TaskListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class TaskListActivity extends FragmentActivity
-        implements TaskListFragment.Callbacks {
-
-    private final TasksService tasksService = new TasksService();
+public class TaskListActivity extends FragmentActivity implements TaskListFragment.Callbacks {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +52,10 @@ public class TaskListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(TasksList tasksList, String email) {
         Intent intent = new Intent(this, TaskDetailActivity.class);
-        intent.putExtra(NotesConstants.TASKS_PARAM, tasksService.getTaskList(id));
+        intent.putExtra(NotesConstants.TASKS_PARAM, tasksList);
+        intent.putExtra(NotesConstants.USER_EMAIL_PARAM, email);
         startActivity(intent);
     }
 }

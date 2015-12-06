@@ -1,19 +1,24 @@
-package pl.mslawin.notes.app;
+package pl.mslawin.notes.app.view;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import pl.mslawin.notes.app.dummy.DummyContent;
-import pl.mslawin.notes.app.exception.GetTasksListException;
+import pl.mslawin.notes.app.R;
+import pl.mslawin.notes.app.constants.NotesConstants;
+import pl.mslawin.notes.app.exception.TasksListException;
 import pl.mslawin.notes.app.model.TasksList;
 import pl.mslawin.notes.app.service.TasksService;
 
@@ -39,12 +44,14 @@ public class TaskListFragment extends ListFragment {
      * The fragment's current callback object, which is notified of list item
      * clicks.
      */
-    private Callbacks mCallbacks = sDummyCallbacks;
+    private Callbacks mCallbacks;
 
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private List<TasksList> tasksLists;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -55,18 +62,8 @@ public class TaskListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        void onItemSelected(String id);
+        void onItemSelected(TasksList tasksList, String email);
     }
-
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String id) {
-        }
-    };
 
     private final TasksService tasksService = new TasksService();
 
@@ -85,15 +82,21 @@ public class TaskListFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String usersEmail = getEmail();
+        List<String> tasksListNames;
         try {
-            setListAdapter(new ArrayAdapter<>(
-                    getActivity(),
-                    android.R.layout.simple_list_item_activated_1,
-                    android.R.id.text1,
-                    getTasksListNames()));
-        } catch (GetTasksListException e) {
-            logger.log(Level.SEVERE, "Unable to get tasks list for user: ", e);
+            tasksListNames = getTasksListNames(usersEmail);
+        } catch (TasksListException e) {
+            logger.log(Level.SEVERE, "Unable to get tasks list for user: " + usersEmail);
+            tasksListNames = Collections.emptyList();
+            Toast.makeText(getActivity().getApplicationContext(), R.string.no_internet_connection,
+                    Toast.LENGTH_LONG).show();
         }
+        setListAdapter(new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
+                tasksListNames));
 
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
@@ -102,11 +105,14 @@ public class TaskListFragment extends ListFragment {
         }
     }
 
-    private List<String> getTasksListNames() {
+    private List<String> getTasksListNames(String usersEmail1) {
         List<String> result = new ArrayList<>();
-        List<TasksList> tasksListList = tasksService.getListsForUser("m@slawin.pl");
-        for (TasksList tasksList : tasksListList) {
-            result.add("List - " + tasksList.getId());
+        // TODO - handle null email address
+        if (tasksLists == null) {
+            tasksLists = tasksService.getListsForUser(usersEmail1);
+        }
+        for (TasksList tasksList : tasksLists) {
+            result.add(tasksList.getName());
         }
         return result;
     }
@@ -123,13 +129,6 @@ public class TaskListFragment extends ListFragment {
         mCallbacks = (Callbacks) activity;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
-    }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
@@ -137,7 +136,7 @@ public class TaskListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(tasksLists.get(position), getEmail());
     }
 
     @Override
@@ -169,5 +168,16 @@ public class TaskListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+
+    private String getEmail() {
+        for (Account account : AccountManager.get(getActivity().getApplicationContext()).getAccounts()) {
+            String name = account.name;
+            if (NotesConstants.EMAIL_PATTERN.matcher(name).matches()) {
+                return name;
+            }
+        }
+        return null;
     }
 }

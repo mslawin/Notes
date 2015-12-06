@@ -7,7 +7,9 @@ import org.joda.time.LocalDateTime;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,12 +18,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import pl.mslawin.notes.app.exception.GetTasksListException;
+import pl.mslawin.notes.app.exception.TasksListException;
 import pl.mslawin.notes.app.model.Task;
 import pl.mslawin.notes.app.model.TasksList;
-import pl.mslawin.notes.dto.ListDto;
-import pl.mslawin.notes.dto.TaskDto;
-import pl.mslawin.notes.dto.TaskListDto;
+import pl.mslawin.notes.dto.model.ListDto;
+import pl.mslawin.notes.dto.model.TaskDto;
+import pl.mslawin.notes.dto.model.TaskListDto;
+import pl.mslawin.notes.dto.request.AddTaskRequest;
+import pl.mslawin.notes.dto.request.CompleteTaskRequest;
 
 /**
  * Created by maciej on 10/11/15.
@@ -34,16 +38,26 @@ public class RequestExecutor {
     private static final Gson GSON = new Gson();
 
     public List<TasksList> getListOfTasksList(String email) {
-        ListDto listDtoList = GSON.fromJson(execute("/getForUser?email=" + email), ListDto.class);
+        ListDto listDtoList = GSON.fromJson(executeGet("/getForUser?email=" + email), ListDto.class);
         return transformListDtoToTaskList(listDtoList);
     }
 
     public TasksList getTaskList(long id) {
-        TaskListDto taskListDto = GSON.fromJson(execute("/" + id), TaskListDto.class);
+        TaskListDto taskListDto = GSON.fromJson(executeGet("/" + id), TaskListDto.class);
         return transformTaskListDtoToTaskList(taskListDto);
     }
 
-    private String execute(String requestUrl) {
+    public void completeTask(long tasksListId, long taskId) {
+        executePost("/complete", new CompleteTaskRequest(tasksListId, taskId));
+    }
+
+    public Task createTask(long tasksListId, String taskValue, String user) {
+        String response = executePost("/addTask", new AddTaskRequest(user, taskValue, tasksListId));
+        TaskDto taskDto = GSON.fromJson(response, TaskDto.class);
+        return transformTaskDtoToTask(taskDto);
+    }
+
+    private String executeGet(String requestUrl) {
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(BASE_URL + requestUrl);
@@ -53,13 +67,39 @@ public class RequestExecutor {
             StringWriter stringWriter = new StringWriter();
             IOUtils.copy(inputStream, stringWriter);
             return stringWriter.toString();
+        } catch (ConnectException e) {
+            logger.log(Level.SEVERE, "Unable to create Internet connection");
+            throw new TasksListException();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Unable to connect to notes service", e);
-            throw new GetTasksListException();
+            throw new TasksListException();
         } finally {
             if (httpURLConnection != null) {
                 httpURLConnection.disconnect();
             }
+        }
+    }
+
+    private String executePost(String requestUrl, Object data) {
+        HttpURLConnection urlConnection;
+        try {
+            URL url = new URL(BASE_URL + requestUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-type", "application/json");
+            urlConnection.setRequestProperty("Accept", "*/*");
+
+            OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
+            writer.write(GSON.toJson(data));
+            writer.flush();
+
+            StringWriter stringWriter = new StringWriter();
+            IOUtils.copy(urlConnection.getInputStream(), stringWriter);
+            return stringWriter.toString();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Unable to connect to notes service");
+            throw new TasksListException(e);
         }
     }
 
@@ -75,11 +115,11 @@ public class RequestExecutor {
     private TasksList transformTaskListDtoToTaskList(TaskListDto taskListDto) {
         TasksList tasksList = new TasksList();
         tasksList.setId(taskListDto.getId());
-        tasksList.setOwner(taskListDto.getOwner().getEmail());
+        tasksList.setName(taskListDto.getName());
+        tasksList.setOwner(taskListDto.getOwner());
         List<Task> tasks = new ArrayList<>();
         for (TaskDto taskDto : taskListDto.getTasks()) {
-            Task task = transformTaskDtoToTask(taskDto);
-            tasks.add(task);
+            tasks.add(transformTaskDtoToTask(taskDto));
         }
         tasksList.setTasks(tasks);
         return tasksList;
@@ -88,9 +128,10 @@ public class RequestExecutor {
     private Task transformTaskDtoToTask(TaskDto taskDto) {
         Task task = new Task();
         task.setId(taskDto.getId());
-        task.setAuthor(taskDto.getAuthor().getEmail());
+        task.setAuthor(taskDto.getAuthor());
         task.setCreationTime(LocalDateTime.fromDateFields(new Date(taskDto.getCreationDate())));
         task.setText(taskDto.getText());
+        task.setCompleted(taskDto.isCompleted());
         return task;
     }
 }

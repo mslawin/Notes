@@ -1,4 +1,4 @@
-package pl.mslawin.notes.app;
+package pl.mslawin.notes.app.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import java.io.Serializable;
+
+import pl.mslawin.notes.app.R;
 import pl.mslawin.notes.app.constants.NotesConstants;
+import pl.mslawin.notes.app.model.TasksList;
 
 
 /**
@@ -41,8 +45,12 @@ public class TaskDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putSerializable(NotesConstants.TASKS_PARAM,
-                    getIntent().getSerializableExtra(NotesConstants.TASKS_PARAM));
+            TasksList tasksList = (TasksList) getIntent().getSerializableExtra(NotesConstants.TASKS_PARAM);
+            setTitle(tasksList.getName());
+            arguments.putSerializable(NotesConstants.TASKS_PARAM, tasksList);
+            arguments.putString(NotesConstants.USER_EMAIL_PARAM,
+                    getIntent().getStringExtra(NotesConstants.USER_EMAIL_PARAM));
+
             TaskDetailFragment fragment = new TaskDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

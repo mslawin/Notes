@@ -1,27 +1,29 @@
-package pl.mslawin.notes.dto;
+package pl.mslawin.notes.dto.model;
 
 public class TaskDto {
 
-    private UserDto author;
+    private String author;
     private String text;
     private long creationDate;
     private long id;
+    private boolean completed;
 
     public TaskDto() {
     }
 
-    public TaskDto(UserDto author, String text, long creationDate, long id) {
+    public TaskDto(String author, String text, long creationDate, long id, boolean completed) {
         this.author = author;
         this.text = text;
         this.creationDate = creationDate;
         this.id = id;
+        this.completed = completed;
     }
 
-    public UserDto getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(UserDto author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
@@ -47,5 +49,13 @@ public class TaskDto {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

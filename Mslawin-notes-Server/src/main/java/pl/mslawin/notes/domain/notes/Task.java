@@ -26,6 +26,9 @@ public class Task {
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
+    @Column(name = "completed")
+    private boolean completed = false;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "list_id")
     private TasksList tasksList;
@@ -69,6 +72,14 @@ public class Task {
 
     public void setCreationTime(LocalDateTime creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public TasksList getTasksList() {

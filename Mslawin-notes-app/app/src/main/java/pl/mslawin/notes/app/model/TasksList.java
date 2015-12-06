@@ -9,6 +9,7 @@ import java.util.List;
 public class TasksList implements Serializable {
 
     private Long id;
+    private String name;
     private String owner;
     private List<Task> tasks;
 
@@ -18,6 +19,14 @@ public class TasksList implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOwner() {

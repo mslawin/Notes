@@ -1,4 +1,4 @@
-package pl.mslawin.notes.dto;
+package pl.mslawin.notes.dto.model;
 
 import java.util.List;
 

@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_id": "mslawin-notes",
+    "project_number": "251316470014",
+    "name": "Mslawin-notes"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251316470014:android:118104626d26f866",
+        "client_id": "android:pl.mslawin.notes.app",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "pl.mslawin.notes.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251316470014-u0hvkstm941ap1n9cssa3tkdi9p9bkcs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.mslawin.notes.app",
+            "certificate_hash": "2A3EDF71A04CF2B097FF20ECEFA84AA9889E3279"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
