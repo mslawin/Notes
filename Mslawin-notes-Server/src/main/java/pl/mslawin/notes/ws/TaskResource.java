@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pl.mslawin.notes.annotation.RequiresAuthentication;
-import pl.mslawin.notes.domain.notes.Task;
 import pl.mslawin.notes.domain.notes.TasksList;
 import pl.mslawin.notes.dto.model.ListDto;
 import pl.mslawin.notes.dto.model.TaskDto;
@@ -42,11 +41,6 @@ public class TaskResource {
     @Inject
     public TaskResource(TaskService taskService) {
         this.taskService = taskService;
-    }
-
-    @RequestMapping(value = "/tasks", method = RequestMethod.GET)
-    public Task getTask() {
-        return new Task("siema", "m@slawin.pl");
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.PUT)
