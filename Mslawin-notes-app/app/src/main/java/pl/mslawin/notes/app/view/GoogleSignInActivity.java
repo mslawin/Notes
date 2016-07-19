@@ -14,20 +14,27 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pl.mslawin.notes.app.R;
+import pl.mslawin.notes.app.TaskListApplication;
+import pl.mslawin.notes.app.exception.NoNetworkConnectionException;
+import pl.mslawin.notes.app.exception.TasksListException;
+import pl.mslawin.notes.app.service.TasksService;
+import pl.mslawin.notes.app.service.UserService;
+import pl.mslawin.notes.app.service.user.UserAuthentication;
 
 
 /**
- * Created by maciej on 11/12/15.
+ * Created by mslawin on 11/12/15.
  */
 public class GoogleSignInActivity extends FragmentActivity implements OnClickListener, OnConnectionFailedListener {
 
     private static final Logger logger = Logger.getLogger(GoogleSignInActivity.class.getName());
 
     private static final int RC_SIGN_IN = 9001;
+
+    private final UserService userService = new UserService();
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -66,15 +73,26 @@ public class GoogleSignInActivity extends FragmentActivity implements OnClickLis
 
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult signInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(signInResult);
+            UserAuthentication userAuthentication = handleSignInResult(signInResult);
+            if (userAuthentication != null) {
+                ((TaskListApplication) getApplication()).setUserAuthentication(userAuthentication);
+                startActivity(new Intent(this, TaskListActivity.class));
+            }
         }
     }
 
-    private void handleSignInResult(GoogleSignInResult signInResult) {
+    private UserAuthentication handleSignInResult(GoogleSignInResult signInResult) {
         if (signInResult.isSuccess()) {
             GoogleSignInAccount account = signInResult.getSignInAccount();
-            logger.log(Level.INFO, account.getEmail() + ":" + account.getDisplayName() + ":" + account.getIdToken());
+            try {
+                return userService.authenticate(getApplication(), account.getIdToken());
+            } catch (NoNetworkConnectionException e) {
+                TasksService.handleNoNetworkException(logger, e, getApplicationContext());
+            } catch (TasksListException e) {
+                TasksService.handleTasksListException(logger, e, getApplicationContext());
+            }
         }
+        return null;
     }
 
     private void signIn() {

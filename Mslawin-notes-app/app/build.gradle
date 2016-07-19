@@ -39,7 +39,6 @@ android {
     }
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'pl.mslawin:notes-transport:1.0-SNAPSHOT'
     compile 'org.apache.commons:commons-io:1.3.2'
     compile 'com.google.code.gson:gson:2.4'

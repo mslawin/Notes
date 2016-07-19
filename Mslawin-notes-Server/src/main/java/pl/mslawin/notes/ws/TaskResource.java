@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pl.mslawin.notes.annotation.RequiresAuthentication;
-import pl.mslawin.notes.domain.notes.TasksList;
 import pl.mslawin.notes.dto.model.ListDto;
 import pl.mslawin.notes.dto.model.TaskDto;
 import pl.mslawin.notes.dto.model.TaskListDto;
 import pl.mslawin.notes.dto.request.AddTaskRequest;
 import pl.mslawin.notes.dto.request.CompleteTaskRequest;
 import pl.mslawin.notes.dto.request.CreateListRequest;
+import pl.mslawin.notes.dto.request.DeleteListRequest;
 import pl.mslawin.notes.dto.request.ShareListRequest;
+import pl.mslawin.notes.excpetion.AlreadySharedException;
 import pl.mslawin.notes.excpetion.NotAuthenticatedException;
 import pl.mslawin.notes.service.TaskService;
 
@@ -35,6 +38,8 @@ import pl.mslawin.notes.service.TaskService;
 @RequestMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiresAuthentication
 public class TaskResource {
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskResource.class);
 
     private final TaskService taskService;
 
@@ -44,9 +49,11 @@ public class TaskResource {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.PUT)
-    public ResponseEntity<Long> createList(HttpServletRequest request, @RequestBody CreateListRequest createListRequest) {
-        TasksList list = taskService.createList(createListRequest.getName(), getUserFromSession(request));
-        return ResponseEntity.ok(list.getId());
+    public ResponseEntity<TaskListDto> createList(HttpServletRequest request, @RequestBody CreateListRequest createListRequest) {
+        String login = getUserFromSession(request);
+        TaskListDto list = taskService.createList(createListRequest.getName(), login);
+        logger.info("User {} created a list with id {}", login, list.getId());
+        return ResponseEntity.ok(list);
     }
 
     @RequestMapping(value = "/addTask", method = RequestMethod.POST)
@@ -55,6 +62,7 @@ public class TaskResource {
         verifyListOwnedByUser(addTaskRequest.getListId(), login);
 
         TaskDto taskDto = taskService.addTask(addTaskRequest, login);
+        logger.info("User {} created a task with id {} for list {}", login, taskDto.getId(), addTaskRequest.getListId());
         return ResponseEntity.ok(taskDto);
     }
 
@@ -71,21 +79,42 @@ public class TaskResource {
 
     @RequestMapping(value = "/complete", method = RequestMethod.POST)
     public ResponseEntity<String> completeTask(HttpServletRequest request, @RequestBody CompleteTaskRequest completeTaskRequest) throws NotAuthenticatedException {
-        verifyListOwnedByUser(completeTaskRequest.getListId(), getUserFromSession(request));
+        String login = getUserFromSession(request);
+        verifyListOwnedByUser(completeTaskRequest.getListId(), login);
         taskService.completeTask(completeTaskRequest.getListId(), completeTaskRequest.getTaskId());
+        logger.info("User {} completed task with id {}", login, completeTaskRequest.getTaskId());
         return ResponseEntity.ok("OK");
     }
 
     @RequestMapping(value = "/share", method = RequestMethod.POST)
-    public ResponseEntity<String> shareList(HttpServletRequest request, @RequestBody ShareListRequest shareListRequest) throws NotAuthenticatedException {
-        verifyListOwnedByUser(shareListRequest.getListId(), getUserFromSession(request));
+    public ResponseEntity<String> shareList(HttpServletRequest request, @RequestBody ShareListRequest shareListRequest)
+            throws NotAuthenticatedException, AlreadySharedException {
+        String login = getUserFromSession(request);
+        verifyListOwnedByUser(shareListRequest.getListId(), login);
         taskService.shareList(shareListRequest.getListId(), shareListRequest.getShareWith());
+        logger.info("User {} shared list {} with user {}", login, shareListRequest.getListId(), shareListRequest.getShareWith());
         return ResponseEntity.ok("OK");
     }
 
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteList(HttpServletRequest request, @RequestBody DeleteListRequest deleteListRequest) throws NotAuthenticatedException {
+        String login = getUserFromSession(request);
+        verifyListOwnedByUser(deleteListRequest.getListId(), login);
+        taskService.deleteList(deleteListRequest.getListId());
+        logger.info("User {} deleted list with id {}", login, deleteListRequest.getListId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @ExceptionHandler(NotAuthenticatedException.class)
-    public void handleAuthentication(HttpServletResponse response) throws IOException {
+    public void handleAuthentication(HttpServletResponse response, NotAuthenticatedException e) throws IOException {
+        logger.error("Not authenticated request", e);
         response.sendError(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @ExceptionHandler(AlreadySharedException.class)
+    public void handleAlreadySharedException(HttpServletResponse response, AlreadySharedException e) throws IOException {
+        logger.error("Trying to share with the same user", e);
+        response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
     private String getUserFromSession(HttpServletRequest request) {

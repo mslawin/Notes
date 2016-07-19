@@ -9,11 +9,8 @@ import java.util.regex.Pattern;
  */
 public final class NotesConstants {
 
-    public static final String TASKS_LIST_PARAM = "TASKS_LIST_PARAM";
-    public static final String TASKS_PARAM = "TASKS_PARAM";
-    public static final String USER_EMAIL_PARAM = "USER_EMAIL_PARAM";
-
-    public static final Pattern EMAIL_PATTERN = Patterns.EMAIL_ADDRESS;
+    public static final String TASKS_LIST_ID_PARAM = "TASKS_LIST_ID_PARAM";
+    public static final String TASKS_LIST_NAME_PARAM = "TASKS_LIST_NAME_PARAM";
 
     private NotesConstants() {
         // constants class

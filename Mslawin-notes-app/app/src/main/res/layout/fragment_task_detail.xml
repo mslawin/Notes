@@ -15,7 +15,8 @@
     android:textIsSelectable="true"
     android:divider="#151515"
     android:dividerHeight="2dp"
-    tools:context=".TaskDetailFragment" />
+    tools:context=".TaskDetailFragment"
+          android:layout_gravity="top"/>
 
     <Button
         android:layout_width="match_parent"
@@ -24,11 +25,27 @@
         android:id="@+id/createTaskButton"
         android:enabled="true" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/shareListButtonName"
-        android:id="@+id/shareButton"
-        android:enabled="true"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shareListButtonName"
+            android:id="@+id/shareButton"
+            android:enabled="true"
+            android:layout_gravity="left"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/listDetailsSharedWithButton"
+            android:id="@+id/sharedWithButton"
+            android:layout_gravity="right"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
 </LinearLayout>

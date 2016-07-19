@@ -26,7 +26,6 @@ public class UserService {
                 .build();
 
         GoogleIdToken idToken = verifier.verify(loginToken);
-
         if (idToken != null) {
             return idToken.getPayload().getEmail();
         }

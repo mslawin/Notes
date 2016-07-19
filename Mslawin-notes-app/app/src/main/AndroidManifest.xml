@@ -5,10 +5,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:name="TaskListApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/notes_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -17,7 +19,7 @@
         </activity>
         <activity
             android:name=".view.TaskDetailActivity"
-            android:label="@string/title_task_detail"
+            android:label="@string/app_name"
             android:parentActivityName=".view.TaskListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -25,7 +27,7 @@
         </activity>
         <activity
             android:name=".view.GoogleSignInActivity"
-            android:label="@string/title_activity_google_play_services" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

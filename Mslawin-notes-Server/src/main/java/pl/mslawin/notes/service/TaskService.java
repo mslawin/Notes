@@ -1,6 +1,7 @@
 package pl.mslawin.notes.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import pl.mslawin.notes.dto.model.ListDto;
 import pl.mslawin.notes.dto.model.TaskDto;
 import pl.mslawin.notes.dto.model.TaskListDto;
 import pl.mslawin.notes.dto.request.AddTaskRequest;
+import pl.mslawin.notes.excpetion.AlreadySharedException;
 
 @Service
 public class TaskService {
@@ -33,9 +35,10 @@ public class TaskService {
     }
 
     @Transactional
-    public TasksList createList(String name, String email) {
+    public TaskListDto createList(String name, String email) {
         TasksList tasksList = new TasksList(name, email);
-        return listDao.save(tasksList);
+        TasksList list = listDao.save(tasksList);
+        return transformListToListDto(list);
     }
 
     @Transactional
@@ -81,8 +84,11 @@ public class TaskService {
     }
 
     @Transactional
-    public void shareList(long listId, String emailToShare) {
+    public void shareList(long listId, String emailToShare) throws AlreadySharedException {
         TasksList tasksList = listDao.findById(listId);
+        if (isAlreadySharedWith(tasksList, emailToShare)) {
+            throw new AlreadySharedException();
+        }
         String sharedWith = tasksList.getSharedWith();
         if (StringUtils.isEmpty(sharedWith)) {
             sharedWith = emailToShare;
@@ -91,6 +97,20 @@ public class TaskService {
         }
         tasksList.setSharedWith(sharedWith);
         listDao.save(tasksList);
+    }
+
+    @Transactional
+    public void deleteList(long listId) {
+        listDao.delete(listId);
+    }
+
+    private boolean isAlreadySharedWith(TasksList tasksList, String emailToShare) {
+        for (String sharedWith : transformSharedWIthToList(tasksList.getSharedWith())) {
+            if (sharedWith.equalsIgnoreCase(emailToShare)) {
+                return true;
+            }
+        }
+        return tasksList.getOwner().equalsIgnoreCase(emailToShare);
     }
 
     private TaskListDto transformListToListDto(TasksList list) {
@@ -104,8 +124,15 @@ public class TaskService {
         String sharedWith = list.getSharedWith();
 
         List<String> sharedWithList;
-        sharedWithList = StringUtils.isEmpty(sharedWith) ? new ArrayList<>() : Lists.newArrayList(sharedWith.split(SHARED_STRING_SPLIT));
+        sharedWithList = StringUtils.isEmpty(sharedWith) ? new ArrayList<>() : transformSharedWIthToList(sharedWith);
         return new TaskListDto(list.getName(), list.getOwner(), tasksDto, list.getId(), sharedWithList);
+    }
+
+    private List<String> transformSharedWIthToList(String sharedWith) {
+        if (StringUtils.isEmpty(sharedWith)) {
+            return Collections.emptyList();
+        }
+        return Lists.newArrayList(sharedWith.split(SHARED_STRING_SPLIT));
     }
 
     private TaskDto transformTaskToTaskDto(Task task) {

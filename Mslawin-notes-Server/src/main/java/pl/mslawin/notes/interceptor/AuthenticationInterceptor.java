@@ -20,14 +20,16 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         if (handler instanceof HandlerMethod) {
             Method method = ((HandlerMethod) handler).getMethod();
-            if (method.isAnnotationPresent(RequiresAuthentication.class)
-                    || method.getDeclaringClass().isAnnotationPresent(RequiresAuthentication.class)) {
-                if (request.getSession().getAttribute(USER_PARAM) == null) {
-                    response.sendError(HttpStatus.UNAUTHORIZED.value());
-                    return false;
-                }
+            if (requiresAuthentication(method) && request.getSession().getAttribute(USER_PARAM) == null) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value());
+                return false;
             }
         }
         return true;
+    }
+
+    private boolean requiresAuthentication(Method method) {
+        return method.isAnnotationPresent(RequiresAuthentication.class) || method.getDeclaringClass().isAnnotationPresent
+                (RequiresAuthentication.class);
     }
 }

@@ -2,15 +2,14 @@ package pl.mslawin.notes.app.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 import java.io.Serializable;
 
 import pl.mslawin.notes.app.R;
 import pl.mslawin.notes.app.constants.NotesConstants;
-import pl.mslawin.notes.app.model.TasksList;
 
 
 /**
@@ -42,16 +41,11 @@ public class TaskDetailActivity extends ActionBarActivity {
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            TasksList tasksList = (TasksList) getIntent().getSerializableExtra(NotesConstants.TASKS_PARAM);
-            setTitle(tasksList.getName());
-            arguments.putSerializable(NotesConstants.TASKS_PARAM, tasksList);
-            arguments.putString(NotesConstants.USER_EMAIL_PARAM,
-                    getIntent().getStringExtra(NotesConstants.USER_EMAIL_PARAM));
-
+            setTitle((CharSequence) getIntent().getSerializableExtra(NotesConstants.TASKS_LIST_NAME_PARAM));
+            Long taskListId = getIntent().getLongExtra(NotesConstants.TASKS_LIST_ID_PARAM, -1);
             TaskDetailFragment fragment = new TaskDetailFragment();
+            Bundle arguments = new Bundle();
+            arguments.putLong(NotesConstants.TASKS_LIST_ID_PARAM, taskListId);
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.task_detail_container_detail, fragment)

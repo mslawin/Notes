@@ -1,9 +1,11 @@
 package pl.mslawin.notes.app.exception;
 
+import pl.mslawin.notes.app.R;
+
 /**
  * Created by maciej on 10/11/15.
  */
-public class TasksListException extends RuntimeException {
+public class TasksListException extends Exception {
 
     public TasksListException() {
     }

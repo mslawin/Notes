@@ -1,6 +1,7 @@
 package pl.mslawin.notes.app.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class TasksList implements Serializable {
     private String name;
     private String owner;
     private List<Task> tasks;
+    private Collection<String> sharedWith;
 
     public Long getId() {
         return id;
@@ -43,5 +45,13 @@ public class TasksList implements Serializable {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public Collection<String> getSharedWith() {
+        return sharedWith;
+    }
+
+    public void setSharedWith(Collection<String> sharedWith) {
+        this.sharedWith = sharedWith;
     }
 }

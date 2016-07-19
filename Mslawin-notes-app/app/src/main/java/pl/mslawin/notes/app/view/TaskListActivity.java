@@ -1,12 +1,9 @@
 package pl.mslawin.notes.app.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import pl.mslawin.notes.app.R;
-import pl.mslawin.notes.app.constants.NotesConstants;
-import pl.mslawin.notes.app.model.TasksList;
 
 
 /**
@@ -21,18 +18,16 @@ import pl.mslawin.notes.app.model.TasksList;
  * {@link TaskListFragment} and the item details
  * (if present) is a {@link TaskDetailFragment}.
  * <p/>
- * This activity also implements the required
- * {@link TaskListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class TaskListActivity extends FragmentActivity implements TaskListFragment.Callbacks {
+public class TaskListActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
 
-        if (findViewById(R.id.task_detail_container) != null) {
+        if (savedInstanceState == null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
@@ -40,22 +35,12 @@ public class TaskListActivity extends FragmentActivity implements TaskListFragme
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            TaskListFragment taskListFragment =
-                    ((TaskListFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.task_list));
-            taskListFragment.setActivateOnItemClick(true);
-        }
-    }
+            TaskListFragment taskListFragment = new TaskListFragment();
 
-    /**
-     * Callback method from {@link TaskListFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
-    @Override
-    public void onItemSelected(TasksList tasksList, String email) {
-        Intent intent = new Intent(this, TaskDetailActivity.class);
-        intent.putExtra(NotesConstants.TASKS_PARAM, tasksList);
-        intent.putExtra(NotesConstants.USER_EMAIL_PARAM, email);
-        startActivity(intent);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.task_list, taskListFragment)
+                    .commit();
+        }
     }
 }

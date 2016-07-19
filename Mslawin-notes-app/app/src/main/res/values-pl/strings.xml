@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mslawin-notes-app</string>
+    <string name="app_name">Bycze Notatki</string>
     <string name="title_task_detail">Task Detail</string>
     <string name="no_internet_connection">Nie można połączyć się z Internetem. Sprawdź swoje połączenie i spróbuj ponownie</string>
     <string name="ok">OK</string>
@@ -8,7 +8,7 @@
 
     <string name="createTaskButtonName">Dodaj zadanie</string>
     <string name="createTaskDialogTitle">Dodaj zadanie</string>
-    <string name="createTaskDialogMessage">Wprowadź temat zadania i naciśnij OK</string>
+    <string name="createTaskDialogMessage">Wprowadź temat zadania</string>
     <string name="createTaskDialogText">Temat zadania</string>
     <string name="createTaskSuccess">Pomyślnie dodano nowe zadanie</string>
 
@@ -16,7 +16,25 @@
     <string name="shareListDialogTitle">Udostępnij listę zadań</string>
     <string name="shareListDialogMessage">Wybierz znajomego, któremu chcesz udostępnić listę</string>
     <string name="shareListDialogText">Wybierz lub wprowadź email</string>
-    <string name="shareListSuccess">Pomyślnie udostępniono zadanie</string>
+    <string name="shareListSuccess">Pomyślnie udostępniono listę</string>
+    <string name="shareListIncorrectEmail">Wprowadzony email jest niepoprawny</string>
+    <string name="shareListCantShareWithUser">Nie możesz współdzielić listy z samym sobą, wybierz inny email</string>
+    <string name="shareListAlreadySharedWith">Lista jest już współdzielona z podanym użytkownikiem</string>
 
     <string name="title_activity_google_play_services">Zaloguj się z google</string>
+    <string name="listDetailsSharedWithButton">Współdzielone z</string>
+    <string name="listDetailsSharedWithTitle">Współdzielone z</string>
+    <string name="tasksListsCreateNewList">Dodaj nową listę</string>
+    <string name="tasksListCreateListDialogTitle">Dodaj listę</string>
+    <string name="createListDialogText">Nazwa listy</string>
+    <string name="tasksListCreateListSuccess">Pomyślnie dodano nową listę</string>
+    <string name="createListButtonTitle">Stwórz nową listę</string>
+    <string name="tasksListDeleteListTitle">Napewno chcesz usunąć listę</string>
+    <string name="tasksListConfirmDelete">Tak, usuń listę</string>
+    <string name="createListSuccess">Pomyślnie dodano nową listę</string>
+    <string name="tasksListCreateListDialogMessage">Wprowadź nazwę listy</string>
+    <string name="logoutButtonText">Wyloguj</string>
+
+
+    <string name="google_app_id">1:251316470014:android:118104626d26f866</string>
 </resources>

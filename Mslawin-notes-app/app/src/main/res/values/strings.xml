@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mslawin-notes-app</string>
+    <string name="app_name">Nailing notes</string>
     <string name="title_task_detail">Task Detail</string>
     <string name="no_internet_connection">Couldn\'t connect to the Internet. Please check your connection and try again.</string>
     <string name="ok">OK</string>
@@ -7,7 +7,7 @@
 
     <string name="createTaskButtonName">Create task</string>
     <string name="createTaskDialogTitle">Create task</string>
-    <string name="createTaskDialogMessage">Insert task value and press OK</string>
+    <string name="createTaskDialogMessage">Insert task value</string>
     <string name="createTaskDialogText">Task value</string>
     <string name="createTaskSuccess">Task created successfully</string>
 
@@ -15,7 +15,25 @@
     <string name="shareListDialogTitle">Share tasks list</string>
     <string name="shareListDialogMessage">Pick a friend to share a list</string>
     <string name="shareListDialogText">Pick or insert email</string>
-    <string name="shareListSuccess">Task shared successfully</string>
+    <string name="shareListSuccess">List shared successfully</string>
+    <string name="shareListIncorrectEmail">Provided email is not valid</string>
+    <string name="shareListCantShareWithUser">You can\'t share a list with yourself, choose other email</string>
+    <string name="shareListAlreadySharedWith">This list is already shared with provided user</string>
 
     <string name="title_activity_google_play_services">Login with google</string>
+
+    <string name="listDetailsSharedWithButton">Shared with</string>
+    <string name="listDetailsSharedWithTitle">Shared with</string>
+
+    <string name="tasksListsCreateNewList">Create new list</string>
+    <string name="tasksListCreateListDialogTitle">Add list</string>
+    <string name="tasksListCreateListDialogMessage">Insert list name</string>
+    <string name="createListDialogText">List\'s name</string>
+    <string name="tasksListCreateListSuccess">Successfully created new list</string>
+    <string name="createListButtonTitle">Create a new list</string>
+    <string name="tasksListDeleteListTitle">Do you want to delete list</string>
+    <string name="tasksListConfirmDelete">Yes, delete the list</string>
+    <string name="createListSuccess">List created successfully</string>
+
+    <string name="logoutButtonText">Logout</string>
 </resources>
